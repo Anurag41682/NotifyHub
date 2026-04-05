@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.anurag.notifyhub.dto.request.LoginRequest;
 import com.anurag.notifyhub.dto.request.RegisterRequest;
+import com.anurag.notifyhub.dto.response.LoginResponse;
 import com.anurag.notifyhub.dto.response.RegisterResponse;
 import com.anurag.notifyhub.service.AuthService;
 
@@ -29,6 +31,12 @@ public class AuthController {
     log.info("Register Request Recieved | email={}", registerRequest.getEmail());
     RegisterResponse registerResponse = authService.registerUser(registerRequest);
     return ResponseEntity.status(HttpStatus.CREATED).body(registerResponse);
+  }
+
+  @PostMapping("/login")
+  ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
+    LoginResponse loginResponse = authService.loginUser(loginRequest);
+    return ResponseEntity.status(200).body(loginResponse);
   }
 
 }

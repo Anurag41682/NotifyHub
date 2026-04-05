@@ -24,4 +24,10 @@ public class GlobalExceptionHandler {
         .body(methodArgumentNotValidException.getBindingResult().getFieldErrors().toString());
   }
 
+  @ExceptionHandler(InvalidCredentialsException.class)
+  ResponseEntity<String> invalidCredentials(InvalidCredentialsException invalidCredentialsException) {
+    log.warn("Invalid Email or Password");
+    return ResponseEntity.status(401).body(invalidCredentialsException.getMessage());
+  }
+
 }
