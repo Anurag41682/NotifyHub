@@ -19,19 +19,19 @@ import lombok.Data;
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  Long id;
+  private Long id;
 
   @NotNull
   @Column(nullable = false)
-  String name;
+  private String name;
   @NotNull
   @Column(unique = true, nullable = false)
-  String email;
+  private String email;
   @NotNull
   @Column(nullable = false)
-  String password;
+  private String password;
 
   @CreationTimestamp
-  LocalDateTime createdAt;
+  private LocalDateTime createdAt;
 
 }

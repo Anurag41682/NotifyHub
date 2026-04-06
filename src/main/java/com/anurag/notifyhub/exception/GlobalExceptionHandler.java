@@ -30,4 +30,16 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(401).body(invalidCredentialsException.getMessage());
   }
 
+  @ExceptionHandler(UserNotFoundException.class)
+  ResponseEntity<String> userNotFound(UserNotFoundException userNotFoundException) {
+    log.warn("User not found");
+    return ResponseEntity.status(404).body(userNotFoundException.getMessage());
+  }
+
+  @ExceptionHandler(NotificationNotFoundException.class)
+  ResponseEntity<String> notificationNotFound(NotificationNotFoundException notificationNotFoundException) {
+    log.warn("Notification not found");
+    return ResponseEntity.status(404).body(notificationNotFoundException.getMessage());
+  }
+
 }

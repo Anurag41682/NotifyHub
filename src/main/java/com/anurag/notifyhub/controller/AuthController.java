@@ -35,6 +35,7 @@ public class AuthController {
 
   @PostMapping("/login")
   ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
+    log.info("Login Request Recieved | email={}", loginRequest.getEmail());
     LoginResponse loginResponse = authService.loginUser(loginRequest);
     return ResponseEntity.status(200).body(loginResponse);
   }
