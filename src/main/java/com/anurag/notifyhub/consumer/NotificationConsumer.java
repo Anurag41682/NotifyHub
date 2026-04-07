@@ -38,11 +38,11 @@ public class NotificationConsumer {
     notification.setStatus(NotificationStatus.PROCESSING);
     notificationRepository.save(notification);
     try {
-      throw new RuntimeException("Simulating failure");
-      // log.info("Notification sent");
-      // notification.setStatus(NotificationStatus.SENT);
-      // notification.setSentAt(LocalDateTime.now());
-      // notificationRepository.save(notification);
+      // throw new RuntimeException("Simulating failure");
+      log.info("Notification sent");
+      notification.setStatus(NotificationStatus.SENT);
+      notification.setSentAt(LocalDateTime.now());
+      notificationRepository.save(notification);
 
     } catch (Exception ex) {
       log.error("Notification failed to send | notificationId{}", notificationId, ex);
