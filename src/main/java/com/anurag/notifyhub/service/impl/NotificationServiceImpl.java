@@ -10,6 +10,7 @@ import com.anurag.notifyhub.exception.NotificationNotFoundException;
 import com.anurag.notifyhub.exception.UserNotFoundException;
 import com.anurag.notifyhub.model.Notification;
 import com.anurag.notifyhub.model.User;
+import com.anurag.notifyhub.producer.NotificationProducer;
 import com.anurag.notifyhub.repository.NotificationRepository;
 import com.anurag.notifyhub.repository.UserRepository;
 import com.anurag.notifyhub.service.NotificationService;
@@ -18,10 +19,13 @@ import com.anurag.notifyhub.service.NotificationService;
 public class NotificationServiceImpl implements NotificationService {
   final private NotificationRepository notificationRepository;
   final private UserRepository userRepository;
+  final private NotificationProducer notificationProducer;
 
-  public NotificationServiceImpl(NotificationRepository notificationRepository, UserRepository userRepository) {
+  public NotificationServiceImpl(NotificationRepository notificationRepository, UserRepository userRepository,
+      NotificationProducer notificationProducer) {
     this.notificationRepository = notificationRepository;
     this.userRepository = userRepository;
+    this.notificationProducer = notificationProducer;
   }
 
   NotificationResponse mapToNotificationResponse(Notification notification) {
@@ -47,6 +51,7 @@ public class NotificationServiceImpl implements NotificationService {
     notification.setTitle(notificationRequest.getTitle());
     notification.setType(notificationRequest.getType());
     Notification savedNotification = notificationRepository.save(notification);
+    notificationProducer.sendNotification(savedNotification.getId());
     return mapToNotificationResponse(savedNotification);
   }
 

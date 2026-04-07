@@ -46,6 +46,8 @@ public class Notification {
 
   private LocalDateTime sentAt;
 
+  private Long retryCount = 0L;
+
   @ManyToOne
   @JoinColumn(name = "recipient_id")
   private User recipient;
