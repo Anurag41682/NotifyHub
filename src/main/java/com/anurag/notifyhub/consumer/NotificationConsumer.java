@@ -11,6 +11,7 @@ import com.anurag.notifyhub.exception.NotificationNotFoundException;
 import com.anurag.notifyhub.model.Notification;
 import com.anurag.notifyhub.producer.NotificationProducer;
 import com.anurag.notifyhub.repository.NotificationRepository;
+import com.anurag.notifyhub.service.EmailService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,12 +22,14 @@ public class NotificationConsumer {
   final private NotificationRepository notificationRepository;
   final private NotificationProducer notificationProducer;
   final private RabbitTemplate rabbitTemplate;
+  final private EmailService emailService;
 
   public NotificationConsumer(NotificationRepository notificationRepository,
-      NotificationProducer notificationProducer, RabbitTemplate rabbitTemplate) {
+      NotificationProducer notificationProducer, RabbitTemplate rabbitTemplate, EmailService emailService) {
     this.notificationRepository = notificationRepository;
     this.notificationProducer = notificationProducer;
     this.rabbitTemplate = rabbitTemplate;
+    this.emailService = emailService;
   }
 
   @RabbitListener(queues = "notification-queue")
@@ -39,6 +42,8 @@ public class NotificationConsumer {
     notificationRepository.save(notification);
     try {
       // throw new RuntimeException("Simulating failure");
+      emailService.sendEmail(notification.getRecipient().getEmail(), notification.getTitle(),
+          notification.getMessage());
       log.info("Notification sent");
       notification.setStatus(NotificationStatus.SENT);
       notification.setSentAt(LocalDateTime.now());
