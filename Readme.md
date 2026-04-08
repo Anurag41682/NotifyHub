@@ -2,7 +2,7 @@
 
 A real-time notification service with async processing, retry mechanisms, and multi-channel delivery.
 
-**Live:** [https://notify.agnomerf.store](https://notify.agnomerf.store)
+
 
 ---
 
