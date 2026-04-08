@@ -42,4 +42,10 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(404).body(notificationNotFoundException.getMessage());
   }
 
+  @ExceptionHandler(DuplicateNotificationException.class)
+  ResponseEntity<String> duplicateNotification(DuplicateNotificationException duplicateNotificationException) {
+    log.warn("Duplicate Notifications");
+    return ResponseEntity.status(409).body(duplicateNotificationException.getMessage());
+  }
+
 }

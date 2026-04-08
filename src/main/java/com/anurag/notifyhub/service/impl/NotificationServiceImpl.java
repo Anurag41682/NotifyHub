@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.anurag.notifyhub.dto.request.NotificationRequest;
 import com.anurag.notifyhub.dto.response.NotificationResponse;
+import com.anurag.notifyhub.exception.DuplicateNotificationException;
 import com.anurag.notifyhub.exception.NotificationNotFoundException;
 import com.anurag.notifyhub.exception.UserNotFoundException;
 import com.anurag.notifyhub.model.Notification;
@@ -14,18 +15,21 @@ import com.anurag.notifyhub.producer.NotificationProducer;
 import com.anurag.notifyhub.repository.NotificationRepository;
 import com.anurag.notifyhub.repository.UserRepository;
 import com.anurag.notifyhub.service.NotificationService;
+import com.anurag.notifyhub.service.RedisService;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
   final private NotificationRepository notificationRepository;
   final private UserRepository userRepository;
   final private NotificationProducer notificationProducer;
+  final private RedisService redisService;
 
   public NotificationServiceImpl(NotificationRepository notificationRepository, UserRepository userRepository,
-      NotificationProducer notificationProducer) {
+      NotificationProducer notificationProducer, RedisService redisService) {
     this.notificationRepository = notificationRepository;
     this.userRepository = userRepository;
     this.notificationProducer = notificationProducer;
+    this.redisService = redisService;
   }
 
   NotificationResponse mapToNotificationResponse(Notification notification) {
@@ -42,7 +46,10 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   @Override
-  public NotificationResponse createNotification(NotificationRequest notificationRequest) {
+  public NotificationResponse createNotification(NotificationRequest notificationRequest, String idempotencyKey) {
+    if (redisService.exists(idempotencyKey)) {
+      throw new DuplicateNotificationException("Notification already exists with idempotency key: " + idempotencyKey);
+    }
     User user = userRepository.findById(notificationRequest.getRecipientId())
         .orElseThrow(() -> new UserNotFoundException("User not found"));
     Notification notification = new Notification();
@@ -52,6 +59,7 @@ public class NotificationServiceImpl implements NotificationService {
     notification.setType(notificationRequest.getType());
     Notification savedNotification = notificationRepository.save(notification);
     notificationProducer.sendNotification(savedNotification.getId());
+    redisService.save(idempotencyKey, 24);
     return mapToNotificationResponse(savedNotification);
   }
 

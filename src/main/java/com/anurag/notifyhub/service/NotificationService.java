@@ -6,7 +6,7 @@ import com.anurag.notifyhub.dto.request.NotificationRequest;
 import com.anurag.notifyhub.dto.response.NotificationResponse;
 
 public interface NotificationService {
-  NotificationResponse createNotification(NotificationRequest notificationRequest);
+  NotificationResponse createNotification(NotificationRequest notificationRequest, String idempotencyKey);
 
   List<NotificationResponse> getNotificationForRecipient(Long recipientId);
 
