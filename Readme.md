@@ -39,8 +39,8 @@ Client (API call)
            │
            ▼
 ┌──────────────────────┐     ┌───────────────┐
-│   Redis              │     │   MySQL        │
-│   (Idempotency)      │     │   (Storage)    │
+│   Redis              │     │   MySQL       │
+│   (Idempotency)      │     │   (Storage)   │
 └──────────────────────┘     └───────────────┘
            │
            ▼
@@ -56,10 +56,10 @@ Client (API call)
 ┌──────────────────────┐
 │   Consumer           │
 │  ┌────────────────┐  │
-│  │ Process msg     │  │
-│  │ Send email      │  │
-│  │ Update status   │  │
-│  │ Retry on fail   │  │
+│  │ Process msg    │  │
+│  │ Send email     │  │
+│  │ Update status  │  │
+│  │ Retry on fail  │  │
 │  └────────────────┘  │
 └──────────────────────┘
            │
@@ -77,7 +77,7 @@ Client (API call)
 
 **Async Notification Processing** — Notifications are created as PENDING, pushed to RabbitMQ, and processed asynchronously by a consumer. The API responds instantly without waiting for email delivery.
 
-**Retry with Exponential Backoff** — If delivery fails, the system retries up to 3 times with increasing delays (2s → 4s → 8s) before marking the notification as FAILED.
+**Retry with Exponential Backoff** — If delivery fails, the system retries up to 3 times with increasing delays (1s → 2s → 4s) before marking the notification as FAILED.
 
 **Dead Letter Queue** — Notifications that fail after all retry attempts are moved to a DLQ for inspection and potential reprocessing.
 
