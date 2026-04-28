@@ -34,7 +34,11 @@ public class EmailService {
         .POST(HttpRequest.BodyPublishers.ofString(jsonBody)).build();
     HttpClient client = HttpClient.newHttpClient();
 
-    client.send(request, HttpResponse.BodyHandlers.ofString());
+    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    if (response.statusCode() != 200) {
+      log.error("Email sending failed | status={} | body={}", response.statusCode(), response.body());
+      throw new RuntimeException("Email sending failed with status: " + response.statusCode());
+    }
   }
 
 }
